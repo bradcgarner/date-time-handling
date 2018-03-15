@@ -1,0 +1,65 @@
+/* to use this:
+ * add the tooltip class to any element to receive a tooltip
+ * add a popover div as a child to any element to receive a tooltip 
+ * add popoverWide1 or popoverWide2 (in addition to popover) if needed
+ * unique to this project: editPencil is absolute, vs relative, so it is repeated here;
+ * do NOT add 'tooltip' to editPencil elements
+ */
+.tooltip {
+  /* position: relative; */
+}
+.editPencil .popover,
+.tooltip .popover {
+  display: none;
+  padding: 5px;
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  width: 100px;
+  top: 100%;
+  background-color: #333;
+  color: white;
+  opacity: 0.85;
+  border: 1px solid #52524e;
+  border-radius: 10px;
+  -moz-box-shadow: 7px 7px 7px -5px #999;
+  -webkit-box-shadow: 7px 7px 7px -5px #999;
+  box-shadow: 7px 7px 7px -5px #999;
+  z-index: 999;
+  margin-top: 3px;
+  font-size: 12px; /* Ben, did you make this 0.8em? it was overflowing */
+  text-align: left;
+}
+.popover p {
+  margin-top: 0;
+  margin-bottom: 0;
+  width: 100%;
+  overflow-wrap: break-word;
+  font-size: 12px;
+}
+.tooltip:hover .popover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+}
+.popover:after, .popover:before {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  pointer-events: none; 
+}
+.popover:after {
+  border-bottom-color: #333;
+  border-width: 7px;
+  margin-left: -7px; 
+}
+.popover:before {
+  border-bottom-color: black;
+  border-width: 7px;
+  margin-left: -7px; 
+}

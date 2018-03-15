@@ -1,0 +1,489 @@
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+  font-size: 16px; /* was 100% */
+  font-family: 'Oxygen', sans-serif; /* Brad added */ 
+  /*font: inherit;*/
+  color: #333; /* Brad added */
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, div {
+	display: flex; /* was block */
+}
+body {
+	line-height: 1;
+}
+ol, ul, li {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+* {
+  box-sizing: border-box; /* Brad added */
+}
+
+/* @@@@@@@@@@ END RESET @@@@@@@@@@@@@ */
+
+:root {
+  --eye-hover:#32121a;
+  --eye-blue: #38aebe;
+  --eye-gray: #949aa7;
+  --submit-hover: #ccc6bf;
+  --menu-hover: #ccc6bf;
+  --menu-active: #e4cba6;
+  --menu-background: #f4e3c8;
+  --modal-background: rgba(52,62,71,0.8);
+  --modal-arrows: white;
+  --clickable-area-hover: rgba(167, 128, 83, 0.4);
+  --modal-message-background: rgba(254,254,254,0.8);
+  --modal-close: #333;
+  --modal-close-hover: #ec593e;
+  --spinner: white;
+  --input-background: white;
+
+  --modal-button-z: 2001;
+  --warning-z: 1001;
+  --caption-container-z: 999;
+  --caption-form-z: 2;
+  --clickableArea-z: 2;
+  --login-form-eye-z: 3;
+  --mainMenu-z: 100;
+  --modal-container-z: 999;
+  --test-form-z: 999;
+
+
+}
+/* @@@@@@@@@@ START OUTER >> INNER / TOP >> BOTTOM @@@@@@@@@@@@@ */
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 100vh;
+}
+main,
+.add-test-button-container {
+  width: 100vw;
+  align-items: center;
+  background-image: url('https://az616578.vo.msecnd.net/files/2017/01/01/636189066175271262-596676237_rain.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+/* @@@@@@@@@@ LOGIN @@@@@@@@@@@@@ */
+
+.loginContainer {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.login-form, .test-form,
+.pw-reset {
+  margin: 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.field-and-icon {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.field-and-label {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.field-and-label .input-set-now-button {
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+}
+.icon-container {
+  width: 40px;
+  height: 100%;
+}
+.icon-container .fa,
+.icon-container .fas {
+  width: 40px;
+}
+.icon-container svg {
+  color: black; /* default... should never apply */
+  font-size: 34px;
+}
+.icon-container.icon-active svg {
+  color: white;
+}
+.icon-container.icon-future svg {
+  color: #777;
+}
+.icon-container.icon-past svg {
+  color: #ccc;
+}
+.field-and-label.field-active .test-input-field {
+  border: 1px solid var(--eye-blue);
+}
+.field-and-label.field-future  .test-input-field {
+  background-color: transparent;
+  border: 1px solid #ccc;
+  color: #ccc;
+}
+.field-and-label.field-past  .test-input-field {
+  background-color: #ccc;
+}
+.input-label {
+  color: white;
+  font-size: 11px;
+  margin-top: 3px; 
+}
+.test-input-field,
+.login-form input,
+.pw-reset input,
+.login-form button,
+.test-form button,
+.pw-reset button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+.test-date-edit-container,
+.test-input-field,
+.login-form input,
+.pw-reset input,
+.login-form button,
+.test-form button,
+.pw-reset button {
+  width: 250px;
+}
+.login-form input,
+.pw-reset input,
+.login-form button,
+.test-form button,
+.pw-reset button {
+  margin: 10px;
+}
+.test-input-field {
+  min-height: 28px;
+}
+#narrative {
+  min-height: 84px;
+}
+.test-input-field,
+.input-label {
+  margin-left: 10px;
+}
+.test-date-edit-container .test-input-field,
+.field-and-label .test-date-edit-input-label {
+  margin-left: 0px;
+}
+.test-date-edit-container {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.test-date-edit-container .test-input-select {
+  min-width: 30%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
+  margin-top: 5px;
+}
+.warning-container {
+  margin-left: 0px;
+  margin-right: 0px;
+  flex-direction: column;
+}
+.warning {
+  color: rgb(231, 61, 61);
+  font-weight: 600;
+  font-size: 18px;
+  background-color: white;
+  padding: 5px;
+  border: 2px solid red;
+}
+.warning-big {
+  color: red;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.2;
+  font-style: italic;
+}
+.warning-container .warning-button {
+  margin-left: 0px;
+  margin-right: 0px;
+  background-color: rgb(230, 82, 82);
+  border: 1px solid red;
+}
+.test-form {
+  padding-top: 10px;
+  z-index: var(--test-form-z);
+}
+.login-form input,
+.test-input-field,
+.pw-reset input,
+.login-form button,
+.test-form button,
+.pw-reset button {
+  background-color: var(--input-background);
+  padding: 5px;
+}
+.pw-reset {
+  margin-top: 200px;
+}
+.submit-button {
+  height: 30px;
+}
+.add-test-button {
+  height: 100%;
+}
+.test-form .submit-button {
+  height: 80px;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 50px;
+}
+@media (min-width: 420px) {
+  .test-form .submit-button {
+    margin-bottom: 10px;
+  }
+}
+.test-form .submit-button:hover {
+  background-color: transparent;
+}
+.submit-button svg,
+.add-test-button svg {
+  color: white;
+  font-size: 70px;
+}
+.submit-button.submit-warning svg {
+  color: red;
+}
+.add-test-button svg:hover,
+.submit-button svg:hover {
+  color: var(--menu-hover);
+}
+.password {
+  position: relative;
+}
+.login-form .eyeButton {
+  background-color: transparent;
+  border: none;
+  position: absolute;
+  top: 6px;
+  right: 7.5px;
+  height: 15px;
+  width: 30px;
+  z-index: var(--login-form-eye-z);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.eyeButton:focus {
+  outline: 0;
+}
+.fa-eye:hover {
+  color: var(--eye-hover);
+}
+.eyeBlue {
+  color: var(--eye-blue);
+}
+.eyeGray {
+  color: var(--eye-gray);
+}
+.logout {
+  margin: 10px;
+}
+.submit-button:hover {
+  background-color: var(--submit-hover);
+  padding: inherit;
+}
+
+/* @@@@@@@@ MENU @@@@@@@@@@ */
+
+.table-of-tests {
+  margin-top: 40px;
+  max-width: 90%;
+  flex-grow: 1;
+  overflow: hidden;
+  border-spacing: 0 20px;
+  border-collapse: separate;
+}
+.add-test-button-container {
+  padding: 10px;
+}
+.table-of-tests td,
+.table-of-tests th {
+  padding: 5px;
+  text-align: center;
+  background-color: white;
+}
+.table-of-tests .test-list-status {
+  background-color: transparent;
+}
+.table-of-tests .test-list-name {}
+.table-of-tests .test-list-profile {}
+.table-of-tests .test-list-narrative,
+.table-of-tests .test-list-tester {
+  display: none;
+}
+.table-of-tests .test-list-tester {
+  background-color: transparent;
+}
+@media (min-width: 425px) {
+  .table-of-tests .test-list-narrative {
+    display: table-cell;
+  }
+}
+@media (min-width: 620px) {
+  .table-of-tests .test-list-tester {
+    display: table-cell;
+  }
+}
+.table-of-tests .test-list-storm {}
+.table-of-tests .test-list-date {}
+.add-test-button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 100px;
+  justify-content: center;
+  align-items: center;
+}
+.add-test-button-container .add-test-button {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+}
+.add-test-button-container .add-test-button:hover {
+  background-color: transparent;
+  /* border: none; */
+}
+
+.test-list-status {
+  font-size: 32px;
+}
+.fa-thermometer-full {
+  color: #0f0781;
+}
+.fa-thermometer-three-quarters {
+  color: #3d3699;
+}
+.fa-thermometer-half {
+  color: #7c78b8;
+}
+.fa-thermometer-quarter {
+  color: #bfbdda;
+}
+.fa-thermometer-empty {
+  color: white;
+}
+
+/* @@@@@@@@ ALL MODALS @@@@@@@@@@ */
+
+.modal-container {
+  position: fixed;
+  overflow: scroll;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  z-index: var(--modal-container-z);
+  padding: 150px 0 0 0;
+}
+.modal-background { /* all modals */ 
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--modal-background);
+}
+.modal-close {
+  top: 0;
+  right: 5px;
+}
+.modal-container .modal-close-test:hover,
+.modal-message .modal-close:hover,
+.modal-close:hover {
+  color: var(--modal-close-hover);
+}
+
+/* @@@@@@@@ ERROR & LOADING MODALS @@@@@@@@@@ */
+
+.modal-message { /* error modal, has p as child */
+  margin-top: 12.5vh;
+  background-color: var(--modal-message-background);
+  height: 75%;
+  width: 75%;
+  border: 2px solid black;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.modal-message .modal-close { /* error modal */
+  position: absolute;
+  color: #333;
+  width: 50px;
+  height: 50px;
+  font-size: 50px;
+}
+.modal-container .modal-close-test {
+  color: white;
+  position: fixed;
+  font-size: 40px;
+}
+.modal-loading-spinner {
+  color: var(--spinner);
+  font-size: 240px;
+  opacity: 0.6;
+  animation: spin 3s linear infinite;
+} 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* @@@@@@@@@@ OVERRIDES @@@@@@@@@@@ */
+
+.transparent {
+  color: transparent;
+}

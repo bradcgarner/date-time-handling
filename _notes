@@ -1,0 +1,14 @@
+to deploy
+
+1) toggle REACT_APP_BASE_URL in .env 
+2) npm run build
+
+3) sync:
+cd to parent folder
+rsync -av stormclock/build/ aggregator/views/
+
+4) then deploy the server to heroku
+heroku often requires TWO deployments for static environment variables to update...
+
+*************
+to run locally, toggle .env back...
