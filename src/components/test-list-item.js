@@ -1,5 +1,4 @@
 import React from 'react';
-import * as helpers from './helpers';
 
 export default function TestListItem(props){
 

@@ -25,15 +25,13 @@ export default class DateInput extends React.Component {
   }
 
   getNewTimestampProps(){
-    this.setState({
+    const dateTimeObject = helpers.convertTimeStampToIntegers(this.props.timestamp);
+    const newState = {
+      ...dateTimeObject,
       timestamp: this.props.timestamp,
-      year: this.props.timestamp.getFullYear(),
-      month: this.props.timestamp.getMonth() + 1, // months 0 index
-      date: this.props.timestamp.getDate(),
-      hours: this.props.timestamp.getHours(),
-      minutes: this.props.timestamp.getMinutes(),
-      seconds: this.props.timestamp.getSeconds(),
-    })
+      timestampOn: 'lasdjflksjl'
+    };
+    this.setState(newState);
   }
 
   updateValueLists(key){

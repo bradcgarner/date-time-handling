@@ -1,132 +1,59 @@
 import React from 'react';
-import UserLogin from './components/user-login';
-import UserPwReset from './components/user-pw-reset';
-import ErrorModal from './components/error-modal';
-import LoadingModal from './components/loading-modal';
 import TestListItem from './components/test-list-item';
 import TestModal from './components/test-modal';
 import * as helpers from './components/helpers';
-import { REACT_APP_BASE_URL } from './config';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: null,
+      user: {
+        firstName:"Brad",
+        id:1,
+        lastName:"Garner",
+        password:"xxxxx",
+        photo:null,
+        timestampCreated:"2018-03-15T00:04:55.026Z",
+        username:"testuser2222",
+      },
       errorModal: false,
       errorModalMessage: '',
       loading: true,
       addTest: false,
       test: {},
-      testsObject: {},
-      testsArray: [],
+      testsObject: {
+        '1': {
+          id:1,
+          narrative:"description of what we are testing... we can type a lot into this field, but we don't need to.xyzabc",
+          statusTest:9,
+          storm:" ",
+          testProfile:"profile",
+          tester:"1",
+          testname:"name",
+          timestampCreated:"2018-03-14T16:12:58.000Z",
+          timestampEnd: null,
+          timestampOff: null,
+          timestampOn: null,
+          timestampStart:null
+        }
+      },
+      testsArray: [
+        {
+          id:1,
+          narrative:"description of what we are testing... we can type a lot into this field, but we don't need to.xyzabc",
+          statusTest:9,
+          storm:" ",
+          testProfile:"profile",
+          tester:"1",
+          testname:"name",
+          timestampCreated:"2018-03-14T16:12:58.000Z",
+          timestampEnd: null,
+          timestampOff: null,
+          timestampOn: null,
+          timestampStart:null
+        }
+      ],
     };
-  }
-
-  initializeApp(value) {
-    if(value) {
-      this.listTests(20);
-     } else {
-      this.setState({
-        user: null,
-        loading: false,
-      })
-    }
-  }
-
-  componentDidMount(){
-    this.setState({
-      loading: false,
-    });
-  }
-
-  login(username, password){
-    this.setState({
-      loading: true,
-    });
-    const url=`${REACT_APP_BASE_URL}/api/auth/login`
-    const headers = {
-      'Content-Type': 'application/json',
-    }
-    const init = {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({username, password}),
-    }
-    return fetch(url, init)
-    .then(userReturned=>{
-      if(!userReturned.ok){
-        this.setState({
-          loading: false,
-        });
-        return Promise.reject(userReturned.statusText);
-      }
-      return userReturned.json();
-    })
-    .then(user=>{
-      this.setState({
-        user: user,
-      });
-      this.initializeApp(true);
-    })
-    .catch(error=>{
-      this.toggleErrorModal(`Opps! Try again. The server says: ${error}`)
-    })
-  }
-
-  logout(){
-    this.initializeApp(false);
-    this.setState({
-      user: {},
-    })
-    console.log('user has logged out')
-  }
-
-  toggleErrorModal(message){
-    this.setState({
-      errorModal: !this.state.errorModal,
-      errorModalMessage: message,
-    })
-  }
-
-  toggleLoadingModal(value){
-    this.setState({
-      loading: value,
-    })
-  }
-
-  listTests(howMany){
-    this.setState({
-      loading: true,
-    });
-    const url=`${REACT_APP_BASE_URL}/api/tests`
-    const headers = {
-      'Bearer' : this.state.user.authToken,
-    }
-    const init = {
-      headers,
-    }
-
-    return fetch(url, init)
-    .then(testsReturned=>{
-      if(!testsReturned.ok){
-        this.setState({
-          loading: false,
-        });
-        return Promise.reject(testsReturned.statusText);
-      }
-      return testsReturned.json();
-    })
-    .then(testsList=>{
-      this.setState({
-        testsArray: testsList.testsArray,
-        testsObject: testsList.testsObject,
-        loading: false,
-      });
-    })
-    .catch(error=>{
-      this.toggleErrorModal(`Opps! Something went wrong. The server says: ${error}`)
-    })
   }
 
   selectTest(id, index){
@@ -139,67 +66,25 @@ export default class App extends React.Component {
   }
 
   addTest() {
-    this.setState({addTest: true});
+    console.log('sorry, feature not included... this is for timestamp demo only');
   }
 
   saveTestForm(test, index){
     console.log('test to save', test)
     if(!test || typeof test !== 'object') return;
-    
-    this.setState({
-      loading: true,
-    });
-    const params = test.id ? `/${test.id}` : '' ;
-    const method = test.id ? 'PUT' : 'POST' ;
-    const url=`${REACT_APP_BASE_URL}/api/tests${params}`
-    const headers = {
-      'Content-Type': 'application/json',
-      'Bearer' : this.state.user.authToken,
-    }
-    const init = {
-      method,
-      headers,
-      body: JSON.stringify(test),
-    }
 
-    return fetch(url, init)
-    .then(testReturned=>{
-      if(!testReturned.ok){
-        this.setState({
-          loading: false,
-        });
-        return Promise.reject(testReturned.statusText);
-      }
-      return testReturned.json();
-    })
-    .then(test=>{
-      console.log('test returned', test)
-      const testsArray = 
-        !isNaN(index) ? // if an index, it is existing; insert don't add
-        helpers.immutableArrayInsert(index, this.state.testsArray, test) :
-        [test, ...this.state.testsArray];
-      console.log('testsArray',testsArray);
+    const testsArray = 
+      !isNaN(index) ? // if an index, it is existing; insert don't add
+      helpers.immutableArrayInsert(index, this.state.testsArray, test) :
+      [test, ...this.state.testsArray];
       this.setState({
         test,
         testsArray,
         testsObject: {...this.state.testsObject, [test.id]: test },
-        loading: false,
       });
-    })
-    .catch(error=>{
-      this.toggleErrorModal(`Opps! Something went wrong. The server says: ${error}`)
-    })
   }
 
   render() {
-
-    const login = this.state.user ? null :
-      <div className='loginContainer'>
-        <UserLogin
-          login={this.login.bind(this)}
-          toggleErrorModal={this.toggleErrorModal.bind(this)}/>
-        <UserPwReset/>
-      </div> ;
     
     const testListItems = this.state.testsArray.map((test, index)=>{
       return <TestListItem
@@ -243,23 +128,11 @@ export default class App extends React.Component {
         saveTestForm={this.saveTestForm.bind(this)}
         selectTest={this.selectTest.bind(this)} /> : null ;
 
-    const errorModal = this.state.errorModal ? 
-      <ErrorModal
-        message={this.state.errorModalMessage}
-        toggleErrorModal={this.toggleErrorModal.bind(this)}
-      /> : null ;
-
-    const loading = this.state.loading ? 
-      <LoadingModal/> : null ;
-
     return (
       <main className='main'>
-        {login}
         {testsList}
         {testAdd}
         {testModal}
-        {errorModal}
-        {loading}
       </main>
     );
   }

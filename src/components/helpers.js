@@ -8,7 +8,7 @@ export const getTheTimezoneOffset = date => {
   return -offset;
 }
 
-const isDaylightSavings = offset => {
+export const isDaylightSavings = offset => {
   // input: currentOffset with CORRECT sign, i.e. US will have a negative sign
   // returns true if daylight savings time, else false
   // all calcs are in MINUTES
@@ -68,6 +68,19 @@ export const convertTimeStampToString = timestamp => {
   return '' ;
 }
 
+export const convertTimeStampToIntegers = timestamp => {
+  const dateTimeObject = {
+    year: timestamp.getFullYear(),
+    month: timestamp.getMonth() + 1, // months 0 index
+    date: timestamp.getDate(),
+    hours: timestamp.getHours(),
+    minutes: timestamp.getMinutes(),
+    seconds: timestamp.getSeconds(),
+    milliseconds: timestamp.getMilliseconds(),
+  };
+  return dateTimeObject;
+}
+
 export const convertStringToTimeStamp = (theString) => {
   // input: string in ISO 8601 format; 
   // if the offset is not included in the string, zulu time is assumed
@@ -99,10 +112,16 @@ export const convertStringToTimeStamp = (theString) => {
     // READ WHAT TYPE OF SUFFIX IS ON THE END: 2 TYPES: MS AND ZONE
     const splitters = ['.', '-', '+', 'Z'];
     const splitEnd = splitters.map((item, i)=>{
-      if(dateTimeArray[1].includes(splitters[i])) {
+      if(typeof dateTimeArray[1] !== 'string') {
+        if(splitters[i] === 'Z') {
+          return 'not zulu';
+        } else {
+          return splitters[i];
+        }
+      } else if( dateTimeArray[1].includes(splitters[i])) {
         const split = dateTimeArray[1].split(splitters[i]);
         if(splitters[i] !== 'Z') {
-          return parseInt(split[1]);
+          return parseInt(split[1], 10);
         } else {
           return 'zulu';
         }
@@ -117,6 +136,7 @@ export const convertStringToTimeStamp = (theString) => {
   
     // SPLIT TIME FROM MS AND/OR ZONE SUFFIX
     const timeSplit = 
+      typeof dateTimeArray[1] !== 'string' ? '' :
       splitEnd[0] !== splitters[0] ? dateTimeArray[1].split(splitters[0]) :
       splitEnd[1] !== splitters[1] ? dateTimeArray[1].split(splitters[1]) :
       splitEnd[2] !== splitters[2] ? dateTimeArray[1].split(splitters[2]) :
