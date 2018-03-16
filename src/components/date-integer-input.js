@@ -1,7 +1,7 @@
 import React from 'react';
-import * as helpers from './helpers';
+import * as dateTime from './date-time-pure-functions';
 
-export default class DateInput extends React.Component {
+export default class DateIntInput extends React.Component {
   
   constructor(props){
     super(props)
@@ -25,7 +25,7 @@ export default class DateInput extends React.Component {
   }
 
   getNewTimestampProps(){
-    const dateTimeObject = helpers.convertTimeStampToIntegers(this.props.timestamp);
+    const dateTimeObject = dateTime.convertTimeStampToIntegers(this.props.timestamp);
     const newState = {
       ...dateTimeObject,
       timestamp: this.props.timestamp,
@@ -91,7 +91,7 @@ export default class DateInput extends React.Component {
       resolve();
     })
     .then(()=>{
-      const timestamp = helpers.convertIntegersToTimeStamp(
+      const timestamp = dateTime.convertIntegersToTimeStamp(
         this.state.year,
         this.state.month - 1, // months are 0-indexed
         this.state.date,
@@ -144,7 +144,7 @@ export default class DateInput extends React.Component {
         </button>
       </div> : null ;
 
-    const timestampLive = helpers.convertIntegersToTimeStamp(
+    const timestampLive = dateTime.convertIntegersToTimeStamp(
       this.state.year,
       this.state.month - 1, // months are 0-indexed
       this.state.date,
@@ -154,7 +154,7 @@ export default class DateInput extends React.Component {
     );
 
     const timestampText = <p className='input-label test-date-edit-input-label'>
-      {this.state.label}: {helpers.printDateAsString(timestampLive)}
+      {this.state.label}: {dateTime.printDate(timestampLive)}
     </p>
 
     const selectors = [];

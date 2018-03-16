@@ -34,6 +34,7 @@ export default class App extends React.Component {
           timestampEnd: null,
           timestampOff: null,
           timestampOn: null,
+          timestampDone: null,
           timestampStart:null
         }
       },
@@ -50,7 +51,8 @@ export default class App extends React.Component {
           timestampEnd: null,
           timestampOff: null,
           timestampOn: null,
-          timestampStart:null
+          timestampStart:null,
+          timestampDone: null,
         }
       ],
     };

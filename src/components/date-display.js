@@ -1,5 +1,5 @@
 import React from 'react';
-import * as helpers from './helpers';
+import * as dateTime from './date-time-pure-functions';
 
 export default function DateDisplay(props) {
 
@@ -14,7 +14,7 @@ export default function DateDisplay(props) {
     props.display === 'date' ?
       <p className='test-input-field test-input-display'
         id={props.identifier}>
-        {helpers.printDateAsString(props.timestamp)}
+        {dateTime.printDate(props.timestamp)}
       </p> : 
     
     // DEFAULT: props.display === 'set' ?

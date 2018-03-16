@@ -1,7 +1,9 @@
 import React from 'react';
+import * as dateTime from './date-time-pure-functions';
 import * as helpers from './helpers';
 import DateDisplay from './date-display';
-import DateInput from './date-input';
+import DateIntInput from './date-integer-input';
+import DatePickInput from './date-picker-input';
 export default class TestModal extends React.Component {
   
   // App.js fetches all tests from server with timestamps as strings
@@ -23,12 +25,13 @@ export default class TestModal extends React.Component {
       narrative: this.props.test.narrative || '',
       storm: this.props.test.storm || '',
       timestampCreated: this.props.test.timestampCreated ?
-        helpers.convertStringToTimeStamp(this.props.test.timestampCreated) : 
+        dateTime.convertStringToTimeStamp(this.props.test.timestampCreated) : 
         new Date(),
-      timestampOn: helpers.convertStringToTimeStamp(this.props.test.timestampOn),
-      timestampStart: helpers.convertStringToTimeStamp(this.props.test.timestampStart),
-      timestampOff: helpers.convertStringToTimeStamp(this.props.test.timestampOff),
-      timestampEnd: helpers.convertStringToTimeStamp(this.props.test.timestampEnd),
+      timestampOn: dateTime.convertStringToTimeStamp(this.props.test.timestampOn),
+      timestampStart: dateTime.convertStringToTimeStamp(this.props.test.timestampStart),
+      timestampOff: dateTime.convertStringToTimeStamp(this.props.test.timestampOff),
+      timestampEnd: dateTime.convertStringToTimeStamp(this.props.test.timestampEnd),
+      timestampDone: dateTime.convertStringToTimeStamp(this.props.test.timestampDone),
       statusEdit: 'none',
       tester: this.props.user.id,
       editing: false,
@@ -61,11 +64,12 @@ export default class TestModal extends React.Component {
   }
 
   handleTimestampButton(key, override){
+    console.log('key to edit', key)
     // if timestamp is NOT already populated, drop in the time
     if(this.state.statusEdit === key && !override){
       this.setState({statusEdit: 'none'})
       return;
-    } else if (this.state.statusKeys[key] > this.state.statusTest) {      
+    } else if (this.state.statusKeys[key] > this.state.statusTest) { 
       return;
     } else if(!(this.state[key] instanceof Date) || override) {
       // change via button
@@ -99,11 +103,11 @@ export default class TestModal extends React.Component {
       testProfile: this.state.testProfile,
       narrative: this.state.narrative,
       storm: this.state.storm,
-      timestampCreated: helpers.convertTimeStampToString(this.state.timestampCreated),
-      timestampOn: helpers.convertTimeStampToString(this.state.timestampOn),
-      timestampOff: helpers.convertTimeStampToString(this.state.timestampOff),
-      timestampStart: helpers.convertTimeStampToString(this.state.timestampStart),
-      timestampEnd: helpers.convertTimeStampToString(this.state.timestampEnd),
+      timestampCreated: dateTime.convertTimeStampToString(this.state.timestampCreated),
+      timestampOn: dateTime.convertTimeStampToString(this.state.timestampOn),
+      timestampOff: dateTime.convertTimeStampToString(this.state.timestampOff),
+      timestampStart: dateTime.convertTimeStampToString(this.state.timestampStart),
+      timestampEnd: dateTime.convertTimeStampToString(this.state.timestampEnd),
       tester: this.state.tester,
       statusTest: this.state.statusTest,
     }
@@ -147,7 +151,7 @@ export default class TestModal extends React.Component {
       </div>
     });
 
-    // @@@@@@@@@@@@@@@ TIMESTAMP EDITING FIELDS @@@@@@@@@@@@@@@@@@@
+    // @@@@@@@@@@@@@@@ TIMESTAMP INTEGER EDITING FIELDS @@@@@@@@@@@@@@@@@@@
 
     const timestampEditKeyArray =   ['timestampOn',        'timestampOff',        'timestampEnd'];
     const timestampEditIconArray =  ['fas fa-arrow-right', 'fas fa-times-circle', 'fas fa-arrow-left' ];
@@ -160,7 +164,7 @@ export default class TestModal extends React.Component {
           this.state.statusTest > this.state.statusKeys[key] + 2 ? 2 :
           this.state.statusTest > this.state.statusKeys[key]     ? 1 :
           0 ;
-        return <DateInput
+        return <DateIntInput
           identifier={key}
           label={timestampEditLabelArray[index]}
           timestamp={this.state[key]}
@@ -226,14 +230,93 @@ export default class TestModal extends React.Component {
       </div>
     });
 
+    // @@@@@@@@@@@@@@@ TIMESTAMP PICKER FIELDS @@@@@@@@@@@@@@@@@@@
+
+    const timestampPickerKeyArray =   ['timestampDone' ];
+    const timestampPickerIconArray =  ['fas fa-arrow-right' ];
+    const timestampPickerLabelArray = ['field with pickers'   ];
+    
+    const timestampPickerFields = timestampPickerKeyArray.map((key, index)=>{
+      
+      if (this.state.statusEdit === key) {
+        const warning = 
+          this.state.statusTest > this.state.statusKeys[key] + 2 ? 2 :
+          this.state.statusTest > this.state.statusKeys[key]     ? 1 :
+          0 ;
+        return <DatePickInput
+          identifier={key}
+          label={timestampPickerLabelArray[index]}
+          timestamp={this.state[key]}
+          warning={warning}
+          getTimestampFromSelectors={this.getTimestampFromSelectors.bind(this)}
+          handleTimestampButton={this.handleTimestampButton.bind(this)}
+        />
+
+      } else if(this.state.statusTest < this.state.statusKeys[key]) {
+        return <DateDisplay
+          display={'early'}
+          identifier={key}
+          timestamp={this.state[key]}
+          handleTimestampButton={this.handleTimestampButton.bind(this)}
+        />
+
+      } else if(this.state[key] instanceof Date) {
+        return <DateDisplay
+        display={'date'}
+        identifier={key}
+        timestamp={this.state[key]}
+        handleTimestampButton={this.handleTimestampButton.bind(this)}
+      /> 
+
+      } else {
+        return <DateDisplay
+          display={'set'}
+          identifier={key}
+          timestamp={this.state[key]}
+          handleTimestampButton={this.handleTimestampButton.bind(this)}
+        />
+      }
+    });
+
+    const timestampPickerFieldsDivs = timestampPickerKeyArray.map((key, index)=>{
+      const labelClass = this.state.statusPicker === key ?
+        'input-label test-date-edit-input-label' :
+        'input-label' ;
+      const iconContainerClass = 
+        this.state.statusTest === this.state.statusKeys[key] ?
+          'icon-active' :
+        this.state.statusTest < this.state.statusKeys[key] + 2 ?
+          'icon-future' :
+          'icon-past' ;
+
+      const fieldClass = 
+        this.state.statusTest === this.state.statusKeys[key] ?
+          'field-active' :
+        this.state.statusTest < this.state.statusKeys[key] + 2 ?
+          'field-future' :
+          'field-past' ;
+
+      return <div key={`${key}${index}`} className='field-and-icon'>
+        <div className={`icon-container ${iconContainerClass}`}
+          onClick={(e)=>this.handleTimestampButton(key)}>
+          <i className={timestampPickerIconArray[index]}></i>
+        </div>
+        <div className={`field-and-label ${fieldClass}`}>
+          {timestampPickerFields[index]}
+          <label className={labelClass} htmlFor={key}>{timestampPickerLabelArray[index]}</label>
+        </div>
+        
+      </div>
+    });
+
     // @@@@@@@@@@@@@@@ DISPLAY-ONLY FIELDS @@@@@@@@@@@@@@@@@@@
 
-    const timestampStartText = this.state.timestampStart instanceof Date ? helpers.printDateAsString(this.state.timestampStart) : 'calculated by first weight increase' ;
+    const timestampStartText = this.state.timestampStart instanceof Date ? dateTime.printDate(this.state.timestampStart) : 'calculated by first weight increase' ;
 
     const displayKeyArray =   ['timestampCreated',    'timestampStart'];
     const displayIconArray =  ['far fa-check-circle', 'fas fa-tint'];
     const displayLabelArray = ['test created',        'test start'];
-    const displayTextArray =  [helpers.printDateAsString(this.state.timestampCreated), timestampStartText]
+    const displayTextArray =  [dateTime.printDate(this.state.timestampCreated), timestampStartText]
 
     const displayDivs = displayKeyArray.map((key, index)=>{
     
@@ -277,12 +360,10 @@ export default class TestModal extends React.Component {
           <i className='fas fa-times'></i>
         </div>
         <form className='test-form' onSubmit={this.handleSubmit.bind(this)}>
-          {fieldsDivs}
+          {fieldsDivs[0]}
           {displayDivs[0]}
-          {timestampEditFieldsDivs[0]}
-          {displayDivs[1]}
-          {timestampEditFieldsDivs[1]}
-          {timestampEditFieldsDivs[2]}
+          {timestampEditFieldsDivs}
+          {timestampPickerFieldsDivs}
           <button className={`submit-button ${submitClass}`} type="submit">
             <i className="fas fa-save"></i>
           </button>
