@@ -41,29 +41,56 @@ const formatOffsetAsString = offsetMins => {
   const offsetHours = offsetSign === '-' ? 
     Math.abs(Math.ceil( offsetMins/60)) :
     Math.abs(Math.floor(offsetMins/60)) ;
-  const leadingZeroHours = offsetHours < 10 ? '0' : '' ;
+  const offsetHours0 = leadingZero(offsetHours) ;
   const offsetMinsRemaining = Math.abs(offsetMins%60);
-  const leadingZeroMins = offsetMinsRemaining < 10 ? '0' : '' ;
-  const offsetFormatted = `${offsetSign}${leadingZeroHours}${offsetHours}:${leadingZeroMins}${offsetMinsRemaining}`;
+  const offsetMinsRemaining0 = leadingZero(offsetMinsRemaining) ;
+  const offsetFormatted = `${offsetSign}${offsetHours0}:${offsetMinsRemaining0}`;
   return offsetFormatted;
 }
 
-export const convertTimeStampToString = timestamp => {
+export const leadingZero = (intOrString, length=2) => {
+  // helper function when converting to strings
+  // input: integer or string and a length of digits
+  // output: string with leading zeros
+  let theString =
+    typeof intOrString === 'string' ? intOrString :
+    !isNaN(intOrString) ? String(intOrString) :
+    '' ;
+  if(theString.length < length) {
+    const delta = length - theString.length;
+    let leadingZeros = '';
+    for (let i=0; i<delta ; i++) {
+      leadingZeros += '0';
+    }
+    return `${leadingZeros}${theString}`;
+  }
+  return theString;
+}
+
+export const convertTimeStampToString = (timestamp, option) => {
   // input: JS Date object (i.e. timestamp) (correctly formatted, i.e. time zone is local, and time is time in local time zone)
   // output: string in TIMESTAMP WITH TIME ZONE format (zone relative to Zulu)
   // sample output: '2017-12-21T16:26:48-05:00'
   // WHY USE?  Be in full control of the string. Don't send timestamps to the database, and let the database decide how to convert. Convert here, and avoid time zone conversion problems.
+  // option is optional. 'date' = date, 'time' = time; anything else = full timestamp.
   if (timestamp instanceof Date) {
     const year = timestamp.getFullYear();
     const month = timestamp.getMonth() + 1; // months are 0-index in date objects, but not in string
+    const month0 = leadingZero(month);
     const date = timestamp.getDate();
+    const date0 = leadingZero(date);
     const timeSymbol = 'T';
     const hours = timestamp.getHours();
+    const hours0 = leadingZero(hours);
     const minutes = timestamp.getMinutes();
+    const minutes0 = leadingZero(minutes);
     const seconds = timestamp.getSeconds();
+    const seconds0 = leadingZero(seconds);
     const offset = getTheTimezoneOffset(timestamp); // returns signed minutes
     const offsetFormatted = formatOffsetAsString(offset); // pass in signed minutes, returns signed string
-    return `${year}-${month}-${date}${timeSymbol}${hours}:${minutes}:${seconds}${offsetFormatted}`;
+    if(option === 'date') return `${year}-${month0}-${date0}`;
+    if(option === 'time') return `${hours0}:${minutes0}:${seconds0}`;
+    return `${year}-${month0}-${date0}${timeSymbol}${hours0}:${minutes0}:${seconds0}${offsetFormatted}`;
   }
   return '' ;
 }
