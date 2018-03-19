@@ -250,3 +250,113 @@ export const printDate = date => {
   }
   return '';
 }
+
+export const dateDelta = ( date1st, date2nd, option='minutes' ) => {
+  // input: 2 dates, date1 is assumed to be chronologically 1st
+  // output: signed integer of delta between dates; if date1 is first: positive, if date1 is later than date2: negative
+  // timestamp objects have embedded time zone, so no tz conversion needed
+  const date1 = 
+    date1st instanceof Date ? date1st : 
+    typeof date1st === 'string' ? convertStringToTimeStamp(date1st) :
+    null ;
+  const date2 = 
+    date2nd instanceof Date ? date2nd : 
+    typeof date2nd === 'string' ? convertStringToTimeStamp(date2nd) :
+    null ;
+  if(!(date1 instanceof Date)) return null;
+  if(!(date2 instanceof Date)) return null;
+
+  // milliseconds per unit of time
+  const oneSec=1000;
+  const oneMin=1000*60;
+  const oneHr =1000*60*60;
+  const oneDay=1000*60*60*24;
+  const oneMo =1000*60*60*24*30.5; // an approximation only
+  const oneYr =1000*60*60*24*365.25; // a very close approximation
+
+  // Convert both dates to milliseconds
+  const date1Ms = date1.getTime();
+  const date2Ms = date2.getTime();
+
+  // Calculate the difference in milliseconds
+  const differenceMs = date2Ms - date1Ms;
+
+  // Convert back to days and return
+  const delta = 
+    option === 'seconds' ? Math.round(differenceMs/oneSec) :
+    option === 'minutes' ? Math.round(differenceMs/oneMin) :
+    option === 'hours'   ? Math.round(differenceMs/oneHr ) :
+    option === 'days'    ? Math.round(differenceMs/oneDay) :
+    option === 'months'  ? Math.round(differenceMs/oneMo ) :
+    option === 'years'   ? Math.round(differenceMs/oneYr ) :
+    null ;
+  return delta; 
+};
+
+export const rangeIsIncluded = (eventStartIn, eventEndIn, rangeStartIn, rangeEndIn) => {
+  const eventStart = 
+    eventStartIn instanceof Date ? eventStartIn :
+    typeof eventStartIn === 'string' ? convertStringToTimeStamp(eventStartIn) :
+    null;
+  const eventEnd = 
+    eventEndIn instanceof Date ? eventEndIn :
+    typeof eventEndIn === 'string' ? convertStringToTimeStamp(eventEndIn) :
+    null;
+  const rangeStart = 
+    rangeStartIn instanceof Date ? rangeStartIn :
+    typeof rangeStartIn === 'string' ? convertStringToTimeStamp(rangeStartIn) :
+    null;
+  const rangeEnd = 
+    rangeEndIn instanceof Date ? rangeEndIn :
+    typeof rangeEndIn === 'string' ? convertStringToTimeStamp(rangeEndIn) :
+    rangeStart;
+  if(
+    !(eventStart instanceof Date) ||
+    !(eventEnd   instanceof Date) ||
+    !(rangeStart instanceof Date) || 
+    !(rangeEnd   instanceof Date)
+   ) return null;
+   if(
+     (dateDelta(eventStart, eventEnd)<0) ||
+     (dateDelta(rangeStart, rangeEnd)<0)
+   ) return null;
+
+  const deltaStartStart = dateDelta(rangeStart, eventStart);
+  const deltaStartEnd   = dateDelta(rangeStart, eventEnd);
+  const deltaEndStart   = dateDelta(rangeEnd,   eventStart);
+  const deltaEndEnd     = dateDelta(rangeEnd,   eventEnd);
+
+  const startsBeforeStart = deltaStartStart >=0 ? true : false ;
+  const endsBeforeStart   = deltaEndStart   >=0 ? true : false ;
+  const startsAfterEnd    = deltaStartEnd   < 0 ? true : false ;
+  const endsAfterEnd      = deltaEndEnd     < 0 ? true : false ;
+
+  const codes = [              //      |xxx|
+    'entirely before',         // 0 xxx
+    'spans event',             // 1   x|xxx|x
+    'spans start',             // 2   x|x
+    'same start ends earlier', // 3    |xx
+    'exact match',             // 4    |xxx|
+    'same start ends later',   // 5    |xxx|x
+    'subset',                  // 6     xxx
+    'starts later same end',   // 7      xx|
+    'spans end',               // 8      xx|x
+    'entirely after',          // 9         xxx
+    'error'];                  //10
+
+  const code = 
+    startsAfterEnd                             ? 9 : // entirely after
+    deltaStartStart === 0 && deltaEndEnd === 0 ? 4 : // same start ends later
+    deltaStartStart === 0 && !endsAfterEnd     ? 3 : // same start ends earlier
+    deltaStartStart === 0 && endsAfterEnd      ? 5 : // exact match
+    deltaEndEnd === 0                          ? 7 : // starts later same end
+    startsBeforeStart && endsBeforeStart       ? 0 : // entirely before
+    startsBeforeStart && !endsBeforeStart &&
+      !startsAfterEnd && !endsAfterEnd         ? 2 : // spans start
+    startsBeforeStart && endsAfterEnd          ? 1 : // spans event
+    !startsBeforeStart && endsAfterEnd         ? 8 : // spans end
+    !startsBeforeStart && !endsAfterEnd        ? 6 : // subset
+                                                10 ; // error
+  const desc = codes[code];
+  return { desc, code };
+};
