@@ -32,7 +32,7 @@ export const isDaylightSavings = offset => {
   return isDST;
 };
 
-const formatOffsetAsString = offsetMins => {
+const formatOffsetAsString = (offsetMins, useColon=true) => {
   // input: signed integer of minutes of timezone offset
   // US is negative (behind Zulu time)
   // How used?  Helper function to convertTimeStampToString()
@@ -44,7 +44,8 @@ const formatOffsetAsString = offsetMins => {
   const offsetHours0 = leadingZero(offsetHours) ;
   const offsetMinsRemaining = Math.abs(offsetMins%60);
   const offsetMinsRemaining0 = leadingZero(offsetMinsRemaining) ;
-  const offsetFormatted = `${offsetSign}${offsetHours0}:${offsetMinsRemaining0}`;
+  const colon = useColon ? ':' : '' ;
+  const offsetFormatted = `${offsetSign}${offsetHours0}${colon}${offsetMinsRemaining0}`;
   return offsetFormatted;
 }
 
@@ -88,8 +89,11 @@ export const convertTimeStampToString = (timestamp, option) => {
     const seconds0 = leadingZero(seconds);
     const offset = getTheTimezoneOffset(timestamp); // returns signed minutes
     const offsetFormatted = formatOffsetAsString(offset); // pass in signed minutes, returns signed string
+    const offsetFormattedNoColon = formatOffsetAsString(offset, false); // pass in signed minutes, returns signed string
     if(option === 'date') return `${year}-${month0}-${date0}`;
     if(option === 'time') return `${hours0}:${minutes0}:${seconds0}`;
+    if(option === 'd t noz') return `${year}-${month0}-${date0} ${hours0}:${minutes0}:${seconds0}`;
+    if(option === 'd t z') return `${year}-${month0}-${date0} ${hours0}:${minutes0}:${seconds0} ${offsetFormattedNoColon}`;
     return `${year}-${month0}-${date0}${timeSymbol}${hours0}:${minutes0}:${seconds0}${offsetFormatted}`;
   }
   return '' ;
