@@ -1,3 +1,7 @@
+export const isValidDate = date => {
+  return date instanceof Date && isFinite(date);
+};
+
 export const getTheTimezoneOffset = date => {
   // input: optional date parameter; no parameter = current date
   // returns user's current timezone offset from UTC/Zulu time
@@ -204,7 +208,7 @@ export const convertStringToTimeStamp = (theString) => {
     const offsetDelta = offsetParamMins - offsetCurrent;
     // CORRECT THE ZULU TIME
     const timestampAdj = new Date(timestamp - (offsetDelta * milliSecondsPerMinute));
-    return timestampAdj;
+    if(isValidDate(timestampAdj)) return timestampAdj;
   }
   return {} ;
 }
